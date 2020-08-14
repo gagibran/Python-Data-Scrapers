@@ -33,7 +33,7 @@ def get_ml_html(subject_of_search):
         ml_request_status = 0
         while ml_request_status != 200:
             try:
-                ml_request = requests.get('https://lista.mercadolivre.com.br//{}'.format(ml_suffix), time.sleep(7))
+                ml_request = requests.get('https://lista.mercadolivre.com.br//{}'.format(ml_suffix), time.sleep(10))
                 ml_request_status = ml_request.status_code # Since only one request is made, a season doesn't need to be created, thus it doesn't need closing.
                 ml_request.raise_for_status()
             except requests.exceptions.HTTPError as http_err:
@@ -76,14 +76,16 @@ def number_of_pages(html_doc):
     total_pages: the total number of pages the products are divided into (int).
     """
     soup = BeautifulSoup(html_doc.text, 'html.parser')
+    items_per_page = len(soup.find_all('li', {'class': 'results-item'}))
 
     # Finding how many results the search returned:
     total_results = soup.find('div', {'class': 'quantity-results'}).text.strip().split()[0]
+    print(soup.find('div', {'class': 'quantity-results'}).text)
     total_results = int(''.join(total_results.split('.'))) if '.' in total_results else int(total_results)
 
     # Finding the maximum pages the products are divide into:
-    total_pages = total_results // 48 if total_results % 48 == 0 else total_results // 48 + 1 # Adds another page to comport the remaining products.
-    return total_pages, total_results
+    total_pages = total_results // items_per_page if total_results % items_per_page == 0 else total_results // items_per_page + 1 # Adds another page to comport the remaining products.
+    return total_pages, total_results, items_per_page
 
 def content_search(html_doc):
     """
@@ -210,7 +212,7 @@ if __name__ == "__main__":
     content_df = content_to_df(content)
 
     # Handling maximum of pages:
-    maximum_pages, total_items = number_of_pages(html)
+    maximum_pages, total_items, products_per_page = number_of_pages(html)
     if pages > maximum_pages:
         print('{} is greater than the maximum of pages for this product, which is {} pages for {} products. Please, try again.'.format(pages, maximum_pages, total_items))
         sys.exit()
@@ -221,7 +223,7 @@ if __name__ == "__main__":
         print('Scraping over {} more page(s)...'.format(pages-1))
         for page_num in range(1, pages):
             print('Page {}...'.format(page_num+1))
-            html = get_ml_html(search + '_Desde_{}_DisplayType_G'.format(page_num*48+1))
+            html = get_ml_html(search + '_Desde_{}_DisplayType_G'.format(page_num*products_per_page+1))
             content_other_page = content_search(html)
             content_other_page_df = content_to_df(content_other_page)
             content_df = content_df.append(content_other_page_df)
