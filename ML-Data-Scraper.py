@@ -20,7 +20,12 @@ def get_ml_html(subject_of_search):
     OUTPUT:
     ml_request: an HTML document (requests.Response).
     """
-    ml_suffix = '-'.join(subject_of_search.split())
+
+    # Handling number of items per page (48)
+    if '_DisplayType_G' in subject_of_search:
+        ml_suffix = '-'.join(subject_of_search.split())
+    else:
+        ml_suffix = '-'.join(subject_of_search.split()) + '_DisplayType_G'
 
     # Handling page loading:
     testing = []
@@ -68,7 +73,7 @@ def number_of_pages(html_doc):
     html_doc: an HTML document (requests.Response).
 
     OUTPUT
-    num_of_pages: the total number of pages the products are divided into (int).
+    total_pages: the total number of pages the products are divided into (int).
     """
     soup = BeautifulSoup(html_doc.text, 'html.parser')
 
@@ -77,8 +82,8 @@ def number_of_pages(html_doc):
     total_results = int(''.join(total_results.split('.'))) if '.' in total_results else int(total_results)
 
     # Finding the maximum pages the products are divide into:
-    total_pages = total_results // 48 if total_results % 48 != 0 else total_results // 48 + 1 # Adds another page to comport the remaining products.
-    return total_pages
+    total_pages = total_results // 48 if total_results % 48 == 0 else total_results // 48 + 1 # Adds another page to comport the remaining products.
+    return total_pages, total_results
 
 def content_search(html_doc):
     """
@@ -205,9 +210,9 @@ if __name__ == "__main__":
     content_df = content_to_df(content)
 
     # Handling maximum of pages:
-    maximum_pages = number_of_pages(html)
+    maximum_pages, total_items = number_of_pages(html)
     if pages > maximum_pages:
-        print('{} is greater than the maximum of pages for this product ({}). Please, try again.'.format(pages, maximum_pages))
+        print('{} is greater than the maximum of pages for this product, which is {} pages for {} products. Please, try again.'.format(pages, maximum_pages, total_items))
         sys.exit()
 
     # Handling iteration:
@@ -216,7 +221,7 @@ if __name__ == "__main__":
         print('Scraping over {} more page(s)...'.format(pages-1))
         for page_num in range(1, pages):
             print('Page {}...'.format(page_num+1))
-            html = get_ml_html(search + '_Desde_{}'.format(page_num*48+1))
+            html = get_ml_html(search + '_Desde_{}_DisplayType_G'.format(page_num*48+1))
             content_other_page = content_search(html)
             content_other_page_df = content_to_df(content_other_page)
             content_df = content_df.append(content_other_page_df)
