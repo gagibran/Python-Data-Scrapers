@@ -109,9 +109,9 @@ def content_search(html_doc):
     for item in items:
         content_list = []
 
-        # Handling basic elements:
+        # Handling basic URL and name:
         content_list.append(item.a['href']) # URL.
-        content_list.append(item.h2.text.strip().split('por')[0].strip()) # Product name.
+        content_list.append(item.find('span', {'class': 'main-title'}).text.strip()) # Product name.
 
         # Handling prices:
         price_fraction_span = item.find('span', {'class': 'price__fraction'})
@@ -150,9 +150,10 @@ def content_search(html_doc):
         content_list.append(is_interest_free)
 
         # Handling seller:
-        try:
-            seller = item.h2.text.strip().split('por')[1].strip() # Gets the seller's name from the inner h2 tag (if it's discriminated).
-        except:
+        seller_span = item.find('span', {'class': 'item__brand-title-tos'})
+        if seller_span != None:
+            seller = seller_span.text.strip().split()[1] # Gets the seller's name (if it's discriminated).
+        else:
             seller = 'Not discriminated'
         content_list.append(seller)
 
@@ -205,9 +206,6 @@ def df_to_file(df, file_name, type_of_file='CSV'):
     elif type_of_file == 'EXCEL':
         df.to_excel('{}.xlsx'.format(formatted_file_name), sheet_name='Products', index=False) # No need for indices.
         print('The output file is inside the same folder as the script was executed and it is called {}.xlsx.'.format(formatted_file_name))
-    else:
-        print('Not a valid type. Choose between EXCEL and CSV.')
-
 
 if __name__ == "__main__":
     print('\n')
@@ -231,9 +229,9 @@ if __name__ == "__main__":
     # Handling maximum of pages:
     pages = int(input('For how many pages do you wish to iterate through? '))
     print('\n')
-    if pages > maximum_pages:
+    while pages > maximum_pages:
         print('{} is greater than the maximum of pages for this product, which is {} pages. Please, try again.\n'.format(pages, maximum_pages))
-        sys.exit()
+        pages = int(input('For how many pages do you wish to iterate through? '))
 
     # Handling iteration:
     if pages > 1:
@@ -246,7 +244,13 @@ if __name__ == "__main__":
             content_other_page_df = content_to_df(content_other_page)
             content_df = content_df.append(content_other_page_df)
     print('{} items scraped.\n'.format(content_df.shape[0] - 1)) # Total items scraped = number of rows minus the index row.
+
+    # Handling file type:
     file_type = input('What kind of file do you wish to convert the data into? CSV or EXCEL: \n').upper()
+    while file_type != 'CSV' and file_type != 'EXCEL':
+        file_type = input('Invalid file format. What kind of file do you wish to convert the data into? CSV or EXCEL: \n').upper()
+
+    # Converting the file:
     df_to_file(content_df, search, file_type)
     execution_time = round((time.time()-start_timer), 2)
     print('Done. Execution time: {} s.'.format(execution_time))
