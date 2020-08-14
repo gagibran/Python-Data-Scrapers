@@ -22,10 +22,10 @@ def get_ml_html(subject_of_search):
     """
 
     # Handling number of items per page (48)
-    if '_DisplayType_G' in subject_of_search:
+    if '_DisplayType_LF' in subject_of_search:
         ml_suffix = '-'.join(subject_of_search.split())
     else:
-        ml_suffix = '-'.join(subject_of_search.split()) + '_DisplayType_G'
+        ml_suffix = '-'.join(subject_of_search.split()) + '_DisplayType_LF'
 
     # Handling page loading:
     testing = []
@@ -67,25 +67,29 @@ def print_html(html_doc):
 
 def number_of_pages(html_doc):
     """
-    Calculates the number of pages the search returned.
+    Calculates the number of items, pages, and items per page the search returned.
 
     INPUT:
     html_doc: an HTML document (requests.Response).
 
     OUTPUT
     total_pages: the total number of pages the products are divided into (int).
+    total_results_formatted: the total number of products (int).
     """
     soup = BeautifulSoup(html_doc.text, 'html.parser')
-    items_per_page = len(soup.find_all('li', {'class': 'results-item'}))
 
-    # Finding how many results the search returned:
-    total_results = soup.find('div', {'class': 'quantity-results'}).text.strip().split()[0]
-    print(soup.find('div', {'class': 'quantity-results'}).text)
-    total_results = int(''.join(total_results.split('.'))) if '.' in total_results else int(total_results)
+    # Finding how many results the search has returned:
+    total_results = soup.find('div', {'class': 'quantity-results'}).text.strip().split()[0] # UNRELIABLE! Using it just for an estimate. No other way to read the real total of items.
+    total_results_formatted = int(''.join(total_results.split('.'))) if '.' in total_results else int(total_results)
 
     # Finding the maximum pages the products are divide into:
-    total_pages = total_results // items_per_page if total_results % items_per_page == 0 else total_results // items_per_page + 1 # Adds another page to comport the remaining products.
-    return total_pages, total_results, items_per_page
+    if total_results_formatted / 50 > 40: # ML pages are divided in steps of 50 elements, even when there are more than 50 elements per page.
+        total_pages = 40 # Maximum number of pages an ML search returns, even if there are more products.
+    elif total_results_formatted % 50 != 0: # If the maximum number of pages is less than 40 and there is a reminder:
+        total_pages = total_results_formatted // 50 + 1 # Adds another page to comport the remaining products.
+    else:
+        total_pages = total_results_formatted // 50
+    return total_pages
 
 def content_search(html_doc):
     """
@@ -194,40 +198,55 @@ def df_to_file(df, file_name, type_of_file='CSV'):
     OUTPUT:
     The file inside this script's folder.
     """
-    formatted_file_name = '_'.join(file_name.split())
+    formatted_file_name = 'ML_' + '_'.join(file_name.split())
     if type_of_file == 'CSV':
         df.to_csv('{}.csv'.format(formatted_file_name), index=False) # No need for indices.
-    else:
+        print('The output file is inside the same folder as the script was executed and it is called {}.csv.'.format(formatted_file_name))
+    elif type_of_file == 'EXCEL':
         df.to_excel('{}.xlsx'.format(formatted_file_name), sheet_name='Products', index=False) # No need for indices.
-    print('The output file is inside the same folder as the script was executed and it is called {}.{}.'.format(formatted_file_name, type_of_file.lower()))
+        print('The output file is inside the same folder as the script was executed and it is called {}.xlsx.'.format(formatted_file_name))
+    else:
+        print('Not a valid type. Choose between EXCEL and CSV.')
 
 
 if __name__ == "__main__":
+    print('\n')
     search = input('What product do you wish to search for? ')
-    pages = int(input('For how many pages do you wish to iterate through? '))
+    print('\n')
     start_timer = time.time() # Measuring execution time.
-    print('Requesting web page for the product...')
+
+    # Handling the first request:
+    print('Requesting web page for the product...\n')
     html = get_ml_html(search)
+    maximum_pages = number_of_pages(html)
+    print('The search returned a total of {} pages'.format(maximum_pages))
+    print('NOTE: ML caps the maximum page to 40, even when there are more products.')
+    print('NOTE: The total number of items shown in the web page is unreliable: sometimes it is completetly wrong.')
+    print('The reliable amount of items is discriminated in the final spreadsheet generated at the end.\n')
+
+    # Searching the first page:
     content = content_search(html)
     content_df = content_to_df(content)
 
     # Handling maximum of pages:
-    maximum_pages, total_items, products_per_page = number_of_pages(html)
+    pages = int(input('For how many pages do you wish to iterate through? '))
+    print('\n')
     if pages > maximum_pages:
-        print('{} is greater than the maximum of pages for this product, which is {} pages for {} products. Please, try again.'.format(pages, maximum_pages, total_items))
+        print('{} is greater than the maximum of pages for this product, which is {} pages. Please, try again.\n'.format(pages, maximum_pages))
         sys.exit()
 
     # Handling iteration:
-    if pages != 1:
+    if pages > 1:
         print('First page already scraped.')
         print('Scraping over {} more page(s)...'.format(pages-1))
         for page_num in range(1, pages):
             print('Page {}...'.format(page_num+1))
-            html = get_ml_html(search + '_Desde_{}_DisplayType_G'.format(page_num*products_per_page+1))
+            html = get_ml_html(search + '_Desde_{}_DisplayType_LF'.format(page_num*50+1)) # Steps of 50.
             content_other_page = content_search(html)
             content_other_page_df = content_to_df(content_other_page)
             content_df = content_df.append(content_other_page_df)
-    print('Content scraped. Converting data to readable file...')
-    df_to_file(content_df, search, type_of_file='Excel')
+    print('{} items scraped.\n'.format(content_df.shape[0] - 1)) # Total items scraped = number of rows minus the index row.
+    file_type = input('What kind of file do you wish to convert the data into? CSV or EXCEL: \n').upper()
+    df_to_file(content_df, search, file_type)
     execution_time = round((time.time()-start_timer), 2)
     print('Done. Execution time: {} s.'.format(execution_time))
