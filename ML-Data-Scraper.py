@@ -83,7 +83,7 @@ def number_of_pages(html_doc):
 def content_search(html_doc):
     """
     From a web page, gets the items' URL, name, price, installments multiplier, price per installment with this multiplier, whether it can be bought interest-free, 
-    seller (when it's discriminated), and shipping price.
+    seller (when it's discriminated), and whether the shipping is free.
     A typical ML product web page is composed of an ordered list tag, which contains list items that are the products themselves.
 
     INPUT:
@@ -146,12 +146,12 @@ def content_search(html_doc):
         content_list.append(seller)
 
         # Handling shipping price:
-        if item.find('span', {'class': 'text-shipping'}) != None and item.find('span', {'class': 'text-shipping'}).text.strip() != 'Frete grátis':
-            content_list.append(item.find('span', {'class': 'text-shipping'}).text.strip())
-        elif item.find('span', {'class': 'text-shipping'}) != None and item.find('span', {'class': 'text-shipping'}).text.strip() == 'Frete grátis':
-            content_list.append('Free')
+        is_free_shipping_span = item.find('span', {'class': 'text-shipping'})
+        if is_free_shipping_span != None and is_free_shipping_span.text.strip() != '':
+            free_shipping = True
         else:
-            content_list.append('Not discriminated')
+            free_shipping = False
+        content_list.append(free_shipping)
 
         # content_list has, by the end of a loop, [url, product_name, price, inst_multiplier inst_prices, is_interest_free, seller, ship_price].
         # Saves content_list in the list of lists.
@@ -169,7 +169,7 @@ def content_to_df(array_2d):
     OUTPUT:
     ml_df: a Pandas dataframe (pandas.Dataframe).
     """
-    column_labels = ['URL', 'Name', 'Price (BRL)', 'Installments Multiplier', 'Installments', 'Interest-free', 'Seller', 'Shipping Price']
+    column_labels = ['URL', 'Name', 'Price (BRL)', 'Installments Multiplier', 'Installments', 'Interest-free', 'Seller', 'Free shipping']
     ml_df = pd.DataFrame(array_2d, columns=column_labels)
     return ml_df
 
@@ -213,7 +213,7 @@ if __name__ == "__main__":
     # Handling iteration:
     if pages != 1:
         print('First page already scraped.')
-        print('Iterating over {} page(s)...'.format(pages-1))
+        print('Scraping over {} more page(s)...'.format(pages-1))
         for page_num in range(1, pages):
             print('Page {}...'.format(page_num+1))
             html = get_ml_html(search + '_Desde_{}'.format(page_num*48+1))
