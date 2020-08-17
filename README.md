@@ -1,13 +1,13 @@
 # Python-Data-Scrapers
 ## An ever growing script that comports data scrapers, written in Python, that web scrape specific web pages.
 
-### Table of content
+## Table of content
   - [Installation](#installation)
   - [Scrapers](#scrapers)
 	  - [Mercado Livre Scraper](#mercado-livre-scraper)
   - [Next Steps](#next-steps)
 
-### Installation
+## Installation
 This projects was developed using Python 3.8.5. For more information on how to install Python, refer to [the official website](https://www.python.org/).<br>
 
 First, download the project folder (i.e. Python-Data-Scrapers) or fork the project. Then, an optional step to avoid dependency hell would be to create a virtual environment to run the programm without any problems. You can do this by going to any directory's command prompt (preferably an easy-to-remember one, such as inside Python-Data-Scrapers folder) and run:
@@ -29,9 +29,9 @@ And with that, all of the required packages will be installed in your virtual en
 **NOTE: This is a safe script, but always check on which kind of script you are running on your PC, specially when it's been downloaded from the Internet!**<br> 
 **NOTE 2: The code documentation can be found inside the script.**
 
-### Scrapers
+## Scrapers
 A list of web scrapers already implemented.
-#### Mercado Livre Scraper
+### Mercado Livre Scraper
 Outputs a CSV or a XLSX (Excel) file with all the items scraped from a search's result page, or pages of a product. The features of the output table are: URL, product name, price, installments multiplier, price per installment with this multiplier, whether it can be bought interest-free, seller (when it's discriminated), and whether the shipping is free.
 
 To run this script, go to the folder where it's located (i.e. Python-Data-Scrapers/ML_Data_Scraper) and run:
@@ -56,7 +56,7 @@ The created file will have be called ML_product_name.xlsx (or .csv) and it will 
 ![Table](./Example_images/excel_RAMs.png)<br>
 This table has, of course, 217 rows.
 
-### Next Steps
+## Next Steps
 For the time being, the next steps to this project are:
 - Add an option to make the table into a SQL database;
 - Make it into OOP and implement multiple classes to multiple websites, such as Amazon, Kabum (another Brazilian website), Saturn (a German website), and whatnot. The possibilities are endless;
