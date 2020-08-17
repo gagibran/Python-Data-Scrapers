@@ -26,8 +26,8 @@ And with that, all of the required packages will be installed in your virtual en
 ```sh
 (project_env) deactivate
 ```
-<strong>NOTE: This is a safe script, but always check on which kind of script you are running on your PC, specially when it's been downloaded from the Internet!</strong> 
-<strong>NOTE 2: The code documentation can be found inside the script.</strong> 
+**NOTE: This is a safe script, but always check on which kind of script you are running on your PC, specially when it's been downloaded from the Internet!**<br> 
+**NOTE 2: The code documentation can be found inside the script.**
 
 ### Scrapers
 A list of web scrapers already implemented.
