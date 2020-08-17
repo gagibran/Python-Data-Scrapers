@@ -46,14 +46,14 @@ After you finished using the script, deactivate the virtual environment.
 
 The script is very straightforward when it comes to how to use it, but here's an explanation:
 
-When the script is run, the user will be prompt to input what kind of product they want to search. Since this is a Brazilian website, the example will be shown using Portuguese words for the products. For instance, if you want to scrape the price of RAMs (memória RAM in Portuguese), you would type:
-![image info](./Example_images/search_for_RAMs.png)<br>
-This will search the product and scrape the first web page to get some information about it. The next step is to input how many pages you want to scrape. For instance, here the search returned a total of 40 pages, but you can create a table with only the results from the first 4 pages:
-![image info](./Example_images/iteration_RAMs.png)<br>
-This particular search has returned 217 for 4 pages scraped. The next step is to convert the search to an output file. As of right now, you can choose between CSV and XLSX (Excel). Let's convert it to an XLSX file:
-![image info](./Example_images/output_RAMs.png)<br>
-The created file will have be called ML_product_name.xlsx (or .csv) and it will be located inside the same folder that the script is. For this example, the file is called ML_memória_RAM.xlsx. The file looks like the following:
-![image info](./Example_images/excel_RAMs.png)<br>
+When the script is run, the user will be prompt to input what kind of product they want to search. Since this is a Brazilian website, the example will be shown using Portuguese words for the products. For instance, if you want to scrape the price of RAMs (memória RAM in Portuguese), you would type:<br>
+![Search for RAMs](./Example_images/search_for_RAMs.png)<br>
+This will search the product and scrape the first web page to get some information about it. The next step is to input how many pages you want to scrape. For instance, here the search returned a total of 40 pages, but you can create a table with only the results from the first 4 pages:<br>
+![Number of pages](./Example_images/iteration_RAMs.png)<br>
+This particular search has returned 217 for 4 pages scraped. The next step is to convert the search to an output file. As of right now, you can choose between CSV and XLSX (Excel). Let's convert it to an XLSX file:<br>
+![Output](./Example_images/output_RAMs.png)<br>
+The created file will have be called ML_product_name.xlsx (or .csv) and it will be located inside the same folder that the script is. For this example, the file is called ML_memória_RAM.xlsx. The file looks like the following:<br>
+![Table](./Example_images/excel_RAMs.png)<br>
 This table has, of course, 217 rows.
 
 ### Next Steps
