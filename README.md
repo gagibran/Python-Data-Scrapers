@@ -31,6 +31,9 @@ And with that, all of the required packages will be installed in your virtual en
 ```sh
 (project_env) deactivate
 ```
+### Linux
+TBD.
+
 **NOTE: This is a safe script, but always check on which kind of script you are running on your PC, specially when it's been downloaded from the Internet!**<br> 
 **NOTE 2: The code documentation can be found inside the script.**
 
@@ -60,9 +63,6 @@ This particular search has returned 217 for 4 pages scraped. The next step is to
 The created file will have be called ML_product_name.xlsx (or .csv) and it will be located inside the same folder that the script is. For this example, the file is called ML_memória_RAM.xlsx. The file looks like the following:<br>
 ![Table](./Example_images/excel_RAMs.png)<br>
 This table has, of course, 217 rows.
-
-### Linux
-TBD.
 
 ## Next Steps
 For the time being, the next steps to this project are:
