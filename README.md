@@ -3,11 +3,16 @@
 
 ## Table of content
   - [Installation](#installation)
+  	-[Windows](#windows)
+	-[Linux](#linux)
   - [Scrapers](#scrapers)
 	  - [Mercado Livre Scraper](#mercado-livre-scraper)
   - [Next Steps](#next-steps)
 
 ## Installation
+Linux installation will be added soon.
+
+### Windows
 This projects was developed using Python 3.8.5. For more information on how to install Python, refer to [the official website](https://www.python.org/).<br>
 
 First, download the project folder (i.e. Python-Data-Scrapers) or fork the project. Then, an optional step to avoid dependency hell would be to create a virtual environment to run the programm without any problems. You can do this by going to any directory's command prompt (preferably an easy-to-remember one, such as inside Python-Data-Scrapers folder) and run:
@@ -55,6 +60,9 @@ This particular search has returned 217 for 4 pages scraped. The next step is to
 The created file will have be called ML_product_name.xlsx (or .csv) and it will be located inside the same folder that the script is. For this example, the file is called ML_memória_RAM.xlsx. The file looks like the following:<br>
 ![Table](./Example_images/excel_RAMs.png)<br>
 This table has, of course, 217 rows.
+
+### Linux
+TBD.
 
 ## Next Steps
 For the time being, the next steps to this project are:
