@@ -10,11 +10,9 @@
   - [Next Steps](#next-steps)
 
 ## Installation
-Linux installation will be added soon.
-
-### Windows
 This projects was developed using Python 3.8.5. For more information on how to install Python, refer to [the official website](https://www.python.org/).<br>
 
+### Windows
 First, download the project folder (i.e. Python-Data-Scrapers) or fork the project. Then, an optional step to avoid dependency hell would be to create a virtual environment to run the programm without any problems. You can do this by going to any directory's command prompt (preferably an easy-to-remember one, such as inside Python-Data-Scrapers folder) and run:
 ```sh
 python -m venv project_venv
