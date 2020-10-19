@@ -3,8 +3,8 @@
 
 ## Table of content
   - [Installation](#installation)
-  	-[Windows](#windows)
-	-[Linux](#linux)
+  	- [Windows](#windows)
+	- [Linux](#linux)
   - [Scrapers](#scrapers)
 	  - [Mercado Livre Scraper](#mercado-livre-scraper)
   - [Next Steps](#next-steps)
